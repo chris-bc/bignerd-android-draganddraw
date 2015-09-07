@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
  */
 public class BoxDrawingView extends View {
     public static final String TAG = "BoxDrawingView";
+    private static final String BUNDLE_BOXES = "au.id.bennettscash.boxes";
+    private static final String BUNDLE_PARCEL = "au.id.bennettscash.parcel";
 
     private Box mCurrentBox;
     private ArrayList<Box> mBoxes = new ArrayList<Box>();
@@ -83,5 +87,21 @@ public class BoxDrawingView extends View {
 
             canvas.drawRect(left, top, right, bottom, mBoxPaint);
         }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcel = super.onSaveInstanceState();
+        Bundle retVal = new Bundle();
+        retVal.putParcelable(BUNDLE_PARCEL, parcel);
+        retVal.putSerializable(BUNDLE_BOXES, mBoxes);
+        return retVal;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle bundle = (Bundle)state;
+        super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_PARCEL));
+        mBoxes = (ArrayList<Box>)((Bundle) state).getSerializable(BUNDLE_BOXES);
     }
 }
